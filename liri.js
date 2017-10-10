@@ -64,6 +64,10 @@ function myTweets() {
 }
 
 function spotifyThisSong() {
+// Artist(s) artists: object
+// The song's name name:
+// A preview link of the song from Spotify preview_url:
+// The album that the song is from album: name:
   var songs = "";
   console.log("You are in spotifyThisSong now...");
   var questions = [
@@ -81,7 +85,17 @@ function spotifyThisSong() {
       if (err) {
         return console.log("Error occurred: " + err);
       }
-      console.log(data.tracks.items);
+//      console.log(data.tracks.items);
+      if (!err) {
+      data.tracks.items.map(function(data) {
+        console.log(" ");
+        console.log("Artists: ........ " + data.artists);
+        console.log("Song Name: ...... " + data.name);
+        console.log("Preview Link: ... " + data.preview_url);
+        console.log("Album: .......... " + data.album.name);
+        console.log("***************** ");
+      });
+    }
     });
   });
 }
