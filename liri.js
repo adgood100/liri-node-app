@@ -1,29 +1,41 @@
 // LIRI - Language Interpretive Recognition Interface
-//var Twitter = require('twitterKeys');
-var Twitter = require('twitter');
-//var Spotify = require('spotifyKeys');
 
-//var Spotify = require('./spotifyKeys');
+var Twitter = require('twitter');
+var Twit = require('twit');
+var Spotify = require('spotify-web-api-node');
+var spotify = require('spotify');
 var request = require("request");
 var inquirer = require('inquirer');
 var fs = require("fs");
-var keys = require('./keys.js')
+var keys = require('./keys.js');
 
-console.log(Twitter);
+console.log(keys.twitterKeys);
+console.log('************');
+console.log(keys.spotifyKeys);
+console.log('************');
 
-// Take two arguments.
-// The first will be the action (i.e. "my-tweets", "spotify-this-song", etc.)
-// The second will be the parameter that will be passed to the action, etc.
-var action = process.argv[2];
-var value = process.argv[3];
-			
+//console.log(Twitter);
 
-var client = new Twitter (keys.twitterKeys);
+var twitterKeys = {
+  consumer_key: 's0SbSohUYxpnve6h2zxR9cRav',
+  consumer_secret: '6ozHOVvMKGu5tXUuxlE0goeovPjLhu5dMSAbi4XyZqUo2TJIz8',
+  access_token_key: '912383265859915776-suOfUczBXndiuRXFGGTw4aMnYE8MWa1',
+  access_token_secret: 'yi3eH5Ly56nsjErkVv1vnZqIHojGabk3JXPkKqxLLRJE5'
+};
 
-//var spotify = new Spotify({
-//  id: '8af97ebdd9d64f9f8b52ae7558fbb8e9',
-//  secret: '29f85e3924804d58958b8fc759eeb367'
-//});
+var spotifyKeys = {
+  id: '8af97ebdd9d64f9f8b52ae7558fbb8e9',
+  secret: '29f85e3924804d58958b8fc759eeb367'
+};
+
+var client = new Twitter (twitterKeys);
+//var client = new Twit (twitterKeys);
+//console.log(client);
+//console.log('************');
+
+var client2 = new Spotify (spotifyKeys);
+//console.log(client2);
+//console.log('************');
 
 
 // --- Case Structure for LIRI ---
@@ -77,28 +89,142 @@ inquirer.prompt([
 
 function myTweets () {
 	console.log('myTweets');
-	var params = {screen_name: 'AllyGood2'};
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  if (!error) {
-    console.log(tweets);
-  }
-});
+	var forEachTweet;
 
-}
+	var params = {screen_name: 'AllyGood2', count: 25};
+	client.get('statuses/user_timeline', params, searchedData);
+
+	function searchedData (error, tweets, response) {
+//		console.log(tweets);	
+		if (error) {
+			console.log("error occured..." + error);
+		}
+		if (!error) {
+				var strTweets = tweets;
+				console.log(strTweets);
+			for (var i = 0; i < strTweets.length; i++) {
+
+				if (i > 0 && i < strTweets.length) {
+
+					forEachTweet = strTweets[i];
+					console.log('entering forEachTweet');
+					console.log(body);
+					function TweetList(created_at, text, name) {
+					  this.created = created_at;
+					  this.text = text;
+					  this.name = name;
+					  // method which prints all of the stats for a character
+					  this.printStats = function() {
+					    console.log(
+					    	"Created At: " + this.created + 
+					    	"\nTweet Text: " + this.text +
+					    	"\nName: " + this.name 
+					    	);
+					    console.log("\n-------------\n");
+					  };
+					}
+
+					var myTweetList = new TweetList(
+						JSON.parse(strTweets[i]).created_at,
+						JSON.parse(strTweets[i]).text,
+						JSON.parse(strTweets[i]).user.name
+						);
+					myTweetList.printStats();
+
+				}
+
+				else {
+
+					forEachTweet = strTweets[i];
+					console.log('entering forEachTweet');
+					function TweetList(created_at, text) {
+					  this.created = created_at;
+					  this.text = text;
+//					  this.name = name;
+					  // method which prints all of the stats for a character
+					  this.printStats = function() {
+					    console.log(
+					    	"Created At: " + this.created + 
+					    	"\nTweet Text: " + this.text 
+//					    	"\nName: " + this.name 
+					    	);
+					    console.log("\n-------------\n");
+					  };
+					}
+
+					var myTweetList = new TweetList(
+						JSON.parse(forEachTweet).created_at,
+						JSON.parse(forEachTweet).text
+//						JSON.parse(forEachTweet).user.name
+						);
+					myTweetList.printStats();
+
+				}
+			}
+
+		// ---
+
+		}
+	}
+
+};
 
 // --- Twitter Function API Call ---
 
 // --- Spotify Function API Call ---
 
 function spotifyThisSong () {
-	spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
+	var songs = '';
+	console.log('You are in spotifyThisSong now...');
+	var questions = [ 
+		{
+			type: 'input',
+			name: 'songbot',
+			message: 'What song(s) would you like to learn about?',
+			default: function () {
+				return 'The Sign';
+			}
+		}
+	];
+	inquirer.prompt(questions).then(function(songAnswers) {
+
+		// Loop through all the songs in the node argument
+		// And do a little for-loop magic to handle the inclusion of "+"s
+		console.log("You said:..." + songAnswers.songbot);
+		console.log("Let's Go!!!...");
+		var strSongs = songAnswers.songbot.split("+");
+
+		for (var i = 0; i < strSongs.length; i++) {
+
+		if (i > 0 && i < strSongs.length) {
+
+			songs = strSongs[i];
+//			console.log(songs);
+//			requestSong(songs);
+
+		}
+
+			else {
+
+			songs = strSongs[i];
+//			console.log(songs);
+//			requestSong(songs);
+
+			}
+
+	}
+
+	client2.search({ type: 'track', query: "'" + encodeURI(songs) + "'" }, function(err, data) {
+		console.log('Error occured' + err);
 	if (err) {
 		return console.log('Error occurred: ' + err);
 	}
  
 	console.log(data); 
+	console.log(err);
 	});
 
+})
 }
 
 // --- Spotify Function API Call ---
@@ -210,6 +336,41 @@ function movieThis () {
 
 function doWhatItSays () {
 	
+//	var doWhat = [];
+	fs.readFile("random.txt", "utf8", function(err, data) {
+    if (err) {
+      return console.log(err);
+    }
+
+    // Break down all the numbers inside
+    var doWhat = data.split(",");
+    data = data.split(", ");
+    console.log(data);
+
+    // Loop through data to grab those commands and default values and load in table.
+    for (var i = 0; i < doWhat.length; i++) {
+      var doCommand = doWhat[0];
+      var doDefault = doWhat[1];
+    }
+
+    // We will then print the contents of random.txt
+    console.log("doCommand... " + doCommand);
+    console.log("doDefault... " + doDefault);
+
+    if (doCommand === 'my-tweets') {
+    	myTweets();
+    }
+
+    if (doCommand === 'spotify-this-song') {
+    	spotifyThisSong();
+    }
+
+    if (doCommand === 'movie-this') {
+    	movieThis();
+    }
+
+  });
+
 }
 
 // --- Do What It Says Function API Call ---
