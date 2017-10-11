@@ -74,7 +74,7 @@ function spotifyThisSong() {
     {
       type: "input",
       name: "song",
-      message: "What song(s) would you like to learn about?",
+      message: "What song track(s) would you like to learn about?",
       default: function() {
         return "The Sign";
       }
@@ -88,12 +88,15 @@ function spotifyThisSong() {
 //      console.log(data.tracks.items);
       if (!err) {
       data.tracks.items.map(function(data) {
-        console.log(" ");
-        console.log("Artists: ........ " + data.artists);
-        console.log("Song Name: ...... " + data.name);
-        console.log("Preview Link: ... " + data.preview_url);
-        console.log("Album: .......... " + data.album.name);
-        console.log("***************** ");
+        if (answers.song === data.name) {
+          console.log(" ");
+          console.log("Artists: ........ " + this[ data.artists ] );
+ //         console.log("Artists: ........ " + data.artists.map(this[data.artists]));
+          console.log("Track Name: ...... " + data.name);
+          console.log("Preview Link: ... " + data.preview_url);
+          console.log("Album: .......... " + data.album.name);
+          console.log("***************** ");
+      }
       });
     }
     });
